@@ -17,6 +17,12 @@ pipeline {
         NEXUS_LOGIN = 'nexuslogin'
         SONARSERVER = 'sonarserver'
         SONARSCANNER = 'sonarscanner'
+        COLOR_MAP = [
+            'SUCCESS': 'good', 
+            'FAILURE': 'danger',
+            'UNSTABLE': 'warning',
+            'ABORTED': 'danger'
+        ]
     }
 
     stages {
@@ -92,13 +98,14 @@ pipeline {
                 )
             }
         }
-        post {
+    }
+    
+    post {
         always {
             echo 'Slack Notifications.'
             slackSend channel: '#jenkinsci',
                 color: COLOR_MAP[currentBuild.currentResult],
                 message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
         }
-    }
     }
 }
